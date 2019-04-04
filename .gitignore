@@ -1,1 +1,4 @@
-*.log
+.vscode
+/vendor/*
+!/vendor/autoload.php
+!/vendor/composer

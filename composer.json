@@ -1,0 +1,20 @@
+{
+    "name": "chaosexanima/eutopia-vetting",
+    "type": "wordpress-plugin",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Echo",
+            "email": "me@echonyc.name"
+        }
+    ],
+    "require": {},
+    "require-dev": {
+        "10up/phpcs-composer": "dev-master"
+    },
+    "autoload": {
+        "psr-4": {
+            "EutopiaVetting\\": "classes/"
+        }
+    }
+}
