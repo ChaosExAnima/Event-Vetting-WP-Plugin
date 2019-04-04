@@ -1,4 +1,17 @@
 <?xml version="1.0"?>
 <ruleset name="Project Rules">
 	<rule ref="10up-Default" />
+	<config name="minimum_supported_wp_version" value="5.1"/>
+
+	<rule ref="Squiz.Commenting">
+		<exclude name="Squiz.Commenting.FileComment" />
+	</rule>
+
+	<rule ref="WordPress.WP.I18n">
+		<properties>
+			<property name="check_translator_comments" value="false" />
+			<property name="text_domain" type="array" value="eutopia-vetting" />
+		</properties>
+	</rule>
+
 </ruleset>
