@@ -12,4 +12,9 @@
  * @package eutopia-vetting
  */
 
+namespace EutopiaVetting;
+
 require_once __DIR__ . '/vendor/autoload.php';
+
+new Voyagers\Config();
+new Events\Config();
