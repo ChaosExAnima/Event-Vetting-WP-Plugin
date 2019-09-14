@@ -1,20 +1,25 @@
 {
-    "name": "chaosexanima/eutopia-vetting",
-    "type": "wordpress-plugin",
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "Echo",
-            "email": "me@echonyc.name"
-        }
-    ],
-    "require": {},
-    "require-dev": {
-        "10up/phpcs-composer": "dev-master"
-    },
-    "autoload": {
-        "psr-4": {
-            "EutopiaVetting\\": "classes/"
-        }
-    }
+	"name": "chaosexanima/eutopia-vetting",
+	"description": "WordPress plugin for vetting events for users.",
+	"type": "wordpress-plugin",
+	"license": "MIT",
+	"authors": [
+		{
+			"name": "Echo",
+			"email": "ChaosExAnima@users.noreply.github.com"
+		}
+	],
+	"require": {},
+	"require-dev": {
+		"wp-coding-standards/wpcs": "^2.1",
+		"phpcompatibility/phpcompatibility-wp": "^2.1"
+	},
+	"autoload": {
+		"psr-4": {
+			"EutopiaVetting\\": "classes/"
+		}
+	},
+	"scripts": {
+		"lint": "phpcs ."
+	}
 }

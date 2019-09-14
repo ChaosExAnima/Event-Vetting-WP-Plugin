@@ -1,3 +1,6 @@
+wordpress/
+*.code-workspace
+*.sql.gz
 .vscode
 /vendor/*
 !/vendor/autoload.php
