@@ -16,5 +16,8 @@
 			<property name="strict_class_file_names" value="false" />
 		</properties>
 	</rule>
-	<rule ref ="PHPCompatibilityWP" />
+	<rule ref="PHPCompatibilityWP" />
+	<rule ref="WordPress.NamingConventions">
+		<exclude-pattern>*/tests/*</exclude-pattern>
+	</rule>
 </ruleset>
