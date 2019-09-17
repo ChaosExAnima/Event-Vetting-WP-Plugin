@@ -4,7 +4,7 @@
 if ( defined( 'WP_RUN_CORE_TESTS' ) && WP_RUN_CORE_TESTS ) {
 	define( 'ABSPATH', dirname( __FILE__ ) . '/build/' );
 } else {
-	define( 'ABSPATH', dirname( __FILE__ ) . '/' );
+	define( 'ABSPATH', dirname( __FILE__ ) . '/wordpress/' );
 }
 
 /*

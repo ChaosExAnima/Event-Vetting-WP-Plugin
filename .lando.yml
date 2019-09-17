@@ -8,12 +8,13 @@ config:
 
 services:
   appserver:
+    run:
+      - bash /app/bin/setup.sh
     build_as_root:
       - apt-get update -y && apt-get install -y subversion
     overrides:
       environment:
         WP_TESTS_DIR: /app/wordpress
-        WP_TESTS_CONFIG_FILE_PATH: /app/wp-tests-config.php
       volumes:
         - ".:/app/wordpress/wp-content/plugins/vetting-events"
 
