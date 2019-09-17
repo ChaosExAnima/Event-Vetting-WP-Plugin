@@ -6,6 +6,4 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
-    'EventVetting\\Application' => $baseDir . '/classes/Application.php',
-    'EventVetting\\Core' => $baseDir . '/classes/Core.php',
 );

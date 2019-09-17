@@ -1,5 +1,7 @@
 <?xml version="1.0"?>
 <ruleset name="Project Rules">
+	<exclude-pattern>*/vendor/*</exclude-pattern>
+	<exclude-pattern>*/wordpress/*</exclude-pattern>
 	<rule ref="WordPress">
 		<exclude name="Squiz.Commenting.ClassComment" />
 		<exclude name="PEAR.Functions.FunctionCallSignature.ContentAfterOpenBracket" />
