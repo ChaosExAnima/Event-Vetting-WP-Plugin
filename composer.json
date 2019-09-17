@@ -16,7 +16,7 @@
 	},
 	"autoload": {
 		"psr-4": {
-			"EutopiaVetting\\": "classes/"
+			"EventVetting\\": "classes/"
 		}
 	},
 	"scripts": {

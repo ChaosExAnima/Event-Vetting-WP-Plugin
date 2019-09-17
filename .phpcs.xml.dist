@@ -1,19 +1,18 @@
 <?xml version="1.0"?>
 <ruleset name="Project Rules">
-	<rule ref="10up-Default">
-		<exclude name="Squiz.Commenting.FileComment" />
+	<rule ref="WordPress">
+		<exclude name="Squiz.Commenting.ClassComment" />
 		<exclude name="PEAR.Functions.FunctionCallSignature.ContentAfterOpenBracket" />
 		<exclude name="PEAR.Functions.FunctionCallSignature.CloseBracketLine" />
 		<exclude name="PEAR.Functions.FunctionCallSignature.MultipleArguments" />
-	</rule>
-
-	<config name="minimum_supported_wp_version" value="5.1"/>
-
-	<rule ref="WordPress.WP.I18n">
+		<exclude name="WordPress.Files.FileName" />
 		<properties>
 			<property name="check_translator_comments" value="false" />
-			<property name="text_domain" type="array" value="eutopia-vetting" />
+			<property name="text_domain" type="array" value="event-vetting" />
+			<property name="prefixes" type="array" value="eventvetting" />
+			<property name="minimum_supported_wp_version" value="5.1"/>
+			<property name="strict_class_file_names" value="false" />
 		</properties>
 	</rule>
-
+	<rule ref ="PHPCompatibilityWP" />
 </ruleset>
