@@ -9,15 +9,20 @@ class ComposerStaticInit41b2107632aeb6b7ddff1523fbab4e32
     public static $prefixLengthsPsr4 = array (
         'E' => 
         array (
-            'EutopiaVetting\\' => 15,
+            'EventVetting\\' => 13,
         ),
     );
 
     public static $prefixDirsPsr4 = array (
-        'EutopiaVetting\\' => 
+        'EventVetting\\' => 
         array (
             0 => __DIR__ . '/../..' . '/classes',
         ),
+    );
+
+    public static $classMap = array (
+        'EventVetting\\Application' => __DIR__ . '/../..' . '/classes/Application.php',
+        'EventVetting\\Core' => __DIR__ . '/../..' . '/classes/Core.php',
     );
 
     public static function getInitializer(ClassLoader $loader)
@@ -25,6 +30,7 @@ class ComposerStaticInit41b2107632aeb6b7ddff1523fbab4e32
         return \Closure::bind(function () use ($loader) {
             $loader->prefixLengthsPsr4 = ComposerStaticInit41b2107632aeb6b7ddff1523fbab4e32::$prefixLengthsPsr4;
             $loader->prefixDirsPsr4 = ComposerStaticInit41b2107632aeb6b7ddff1523fbab4e32::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInit41b2107632aeb6b7ddff1523fbab4e32::$classMap;
 
         }, null, ClassLoader::class);
     }

@@ -1,20 +1,19 @@
 <?php
 /**
- * Plugin Name: Eutopia Rising Vetting
- * Plugin URI: http://eutopia-rising.com
- * Description: Vetting plugin for Eutopia Rising.
+ * Plugin Name: Event Vetting
+ * Plugin URI: https://echonyc.name
+ * Description: Vetting plugin events. Integrates with Mailchimp and WooCommerce.
  * Version: 1.0.0
- * Author: Echo <me@echonyc.name>
- * Author URI: echonyc.name
+ * Author: Echo <ChaosExAnima@users.noreply.github.com >
+ * Author URI: https://echonyc.name
  * License: MIT
- * Text Domain: eutopia-vetting
+ * Text Domain: event-vetting
  *
- * @package eutopia-vetting
+ * @package event-vetting
  */
 
-namespace EutopiaVetting;
+namespace EventVetting;
 
 require_once __DIR__ . '/vendor/autoload.php';
 
-new Voyagers\Config();
-new Events\Config();
+Core::init();
