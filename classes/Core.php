@@ -14,5 +14,6 @@ class Core extends Singleton {
 	 * Constructor.
 	 */
 	protected function __construct() {
+		new Admin();
 	}
 }
