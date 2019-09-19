@@ -52,7 +52,10 @@ class PageFactory {
 	) {
 		$this->menu_slug  = EVENT_VETTING_PREFIX . sanitize_title( $page_title );
 		$this->capability = $capability;
-		$this->hook       = add_menu_page(
+		if ( ! $menu_title ) {
+			$menu_title = $page_title;
+		}
+		$this->hook = add_menu_page(
 			$page_title,
 			$menu_title,
 			$capability,
@@ -80,6 +83,9 @@ class PageFactory {
 	) : string {
 		if ( ! $capability ) {
 			$capability = $this->capability;
+		}
+		if ( ! $menu_title ) {
+			$menu_title = $page_title;
 		}
 		return (string) add_submenu_page(
 			$this->menu_slug,
