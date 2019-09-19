@@ -13,6 +13,6 @@ class Core extends Singleton {
 	/**
 	 * Constructor.
 	 */
-	private function __construct() {
+	protected function __construct() {
 	}
 }

@@ -18,9 +18,9 @@ abstract class Singleton {
 	/**
 	 * Singleton accessor method.
 	 *
-	 * @return Core
+	 * @return Singleton
 	 */
-	public static function instance() : Core {
+	public static function instance() : Singleton {
 		if ( ! static::$instance ) {
 			static::$instance = new static();
 		}

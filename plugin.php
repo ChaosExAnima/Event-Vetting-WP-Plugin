@@ -16,4 +16,4 @@ namespace EventVetting;
 
 require_once __DIR__ . '/vendor/autoload.php';
 
-Core::init();
+Core::instance();
