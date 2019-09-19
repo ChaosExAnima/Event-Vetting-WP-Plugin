@@ -25,7 +25,7 @@ class Settings extends Singleton {
 	/**
 	 * Constructor.
 	 */
-	private function __construct() {
+	protected function __construct() {
 		add_action( 'init', [ $this, 'setup' ] );
 	}
 
