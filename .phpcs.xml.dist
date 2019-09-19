@@ -11,7 +11,10 @@
 		<properties>
 			<property name="check_translator_comments" value="false" />
 			<property name="text_domain" type="array" value="event-vetting" />
-			<property name="prefixes" type="array" value="eventvetting" />
+			<property name="prefixes" type="array">
+				<element value="eventvetting" />
+				<element value="event_vetting" />
+			</property>
 			<property name="minimum_supported_wp_version" value="5.1"/>
 			<property name="strict_class_file_names" value="false" />
 		</properties>
