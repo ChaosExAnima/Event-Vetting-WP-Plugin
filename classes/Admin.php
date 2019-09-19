@@ -10,13 +10,14 @@
 namespace EventVetting;
 
 use EventVetting\Admin\PageFactory;
+use EventVetting\Admin\SettingsPage;
 
 class Admin {
 
 	/**
 	 * Constructor.
 	 */
-	protected function __construct() {
+	public function __construct() {
 		add_action( 'admin_menu', [ $this, 'menu' ] );
 		add_action( 'admin_init', [ $this, 'init' ] );
 	}
@@ -31,6 +32,7 @@ class Admin {
 			__( 'Event Vetting', 'event-vetting' ),
 			'__return_empty_string'
 		);
+		new SettingsPage( $page );
 	}
 
 	/**
