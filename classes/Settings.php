@@ -36,7 +36,6 @@ class Settings extends Singleton {
 	 * @param string   $type              Type of the setting to register.
 	 * @param string   $default           Default setting value.
 	 * @param callable $sanitize_callback Callback for sanitization.
-	 * @param callable $update_callback   Callback for when value changes.
 	 *
 	 * @return boolean
 	 */
@@ -44,8 +43,7 @@ class Settings extends Singleton {
 		string $name,
 		string $type = 'string',
 		string $default = '',
-		callable $sanitize_callback = null,
-		callable $update_callback = null
+		callable $sanitize_callback = null
 	) : bool {
 		$self = self::instance();
 		if ( isset( $self->settings[ $name ] ) ) {
@@ -76,7 +74,7 @@ class Settings extends Singleton {
 		if ( is_callable( $sanitize_callback ) ) {
 			$default = $sanitize_callback( $default );
 		}
-		$self->settings[ $name ] = compact( 'name', 'type', 'default', 'sanitize_callback', 'update_callback' );
+		$self->settings[ $name ] = compact( 'name', 'type', 'default', 'sanitize_callback' );
 
 		return true;
 	}
@@ -97,7 +95,7 @@ class Settings extends Singleton {
 	}
 
 	/**
-	 * Gets an option.
+	 * Gets a setting.
 	 *
 	 * Static wrapper around class method.
 	 *
@@ -125,6 +123,42 @@ class Settings extends Singleton {
 	}
 
 	/**
+	 * Updates a setting.
+	 *
+	 * Static wrapper around class method.
+	 *
+	 * @param string $name  The name of the option.
+	 * @param mixed  $value The value to set.
+	 * @return boolean
+	 */
+	public static function set( string $name, $value ) : bool {
+		$self = self::instance();
+		return $self->update_setting( $name, $value );
+	}
+
+	/**
+	 * Updates many settings.
+	 *
+	 * This accepts an associated array of setting key => values,
+	 * and returns an associated array with setting keys => true if updated.
+	 *
+	 * @param array $names Array of setting names and new values.
+	 * @return array
+	 */
+	public static function set_many( array $names ) : array {
+		if ( 0 === count( $names ) ) {
+			return [];
+		}
+
+		$output = [];
+		$self   = self::instance();
+		foreach ( $names as $name => $value ) {
+			$output[ $name ] = $self->update_setting( $name, $value );
+		}
+		return $output;
+	}
+
+	/**
 	 * Gets an option.
 	 *
 	 * @param string $name The name of the option.
@@ -142,5 +176,49 @@ class Settings extends Singleton {
 			return $sanitize_callback( $value );
 		}
 		return $value;
+	}
+
+	/**
+	 * Updates a setting.
+	 *
+	 * Static wrapper around class method.
+	 *
+	 * @param string $name  The name of the option.
+	 * @param mixed  $value The value to set.
+	 * @return boolean
+	 */
+	private function update_setting( string $name, $value ) : bool {
+		if ( ! isset( $this->settings[ $name ] ) ) {
+			return false;
+		}
+
+		$setting = $this->settings[ $name ];
+		if ( is_callable( $setting['sanitize_callback'] ) ) {
+			$sanitize_callback = $setting['sanitize_callback'];
+			$value             = $sanitize_callback( $value );
+		}
+
+		$updated = update_option( self::OPTION_NAME_PREFIX . $name, $value, false );
+		if ( $updated ) {
+			/**
+			 * Fires for all updated setting events.
+			 *
+			 * @since 1.0.0
+			 *
+			 * @param mixed  $value The value of the setting.
+			 * @param string $name  The name of the setting.
+			 */
+			do_action( 'event_vetting_updated_setting', $value, $name );
+
+			/**
+			 * Fires for specific update setting events.
+			 *
+			 * @since 1.0.0
+			 *
+			 * @param mixed  $value The value of the setting.
+			 */
+			do_action( "event_vetting_updated_setting_{$name}", $value );
+		}
+		return $updated;
 	}
 }
