@@ -14,5 +14,6 @@ class Core {
 	public function __construct() {
 		$settings = new Settings( EVENT_VETTING_PREFIX . 'group' );
 		new Admin( $settings );
+		new Application();
 	}
 }
