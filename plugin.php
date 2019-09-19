@@ -21,4 +21,5 @@ define( 'EVENT_VETTING_PREFIX', 'event_vetting_' );
 
 require_once __DIR__ . '/vendor/autoload.php';
 
-Core::instance();
+global $event_vetting_core;
+$event_vetting_core = new Core();

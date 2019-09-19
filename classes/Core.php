@@ -7,13 +7,11 @@
 
 namespace EventVetting;
 
-use EventVetting\Bases\Singleton;
-
-class Core extends Singleton {
+class Core {
 	/**
 	 * Constructor.
 	 */
-	protected function __construct() {
+	public function __construct() {
 		new Admin();
 	}
 }
