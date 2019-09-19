@@ -12,6 +12,7 @@ class Core {
 	 * Constructor.
 	 */
 	public function __construct() {
-		new Admin();
+		$settings = new Settings( EVENT_VETTING_PREFIX . 'group' );
+		new Admin( $settings );
 	}
 }

@@ -15,9 +15,20 @@ use EventVetting\Admin\SettingsPage;
 class Admin {
 
 	/**
-	 * Constructor.
+	 * Settings instance.
+	 *
+	 * @var Settings
 	 */
-	public function __construct() {
+	protected $settings;
+
+	/**
+	 * Constructor.
+	 *
+	 * @param Settings $settings Settings instance.
+	 */
+	public function __construct( Settings $settings ) {
+		$this->settings = $settings;
+
 		add_action( 'admin_menu', [ $this, 'menu' ] );
 		add_action( 'admin_init', [ $this, 'init' ] );
 	}
@@ -32,7 +43,7 @@ class Admin {
 			__( 'Event Vetting', 'event-vetting' ),
 			'__return_empty_string'
 		);
-		new SettingsPage( $page );
+		new SettingsPage( $page, $this->settings );
 	}
 
 	/**
@@ -41,6 +52,5 @@ class Admin {
 	 * @return void
 	 */
 	public function init() {
-
 	}
 }
