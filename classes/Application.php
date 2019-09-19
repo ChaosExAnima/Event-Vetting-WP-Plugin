@@ -2,7 +2,7 @@
 /**
  * Application post type class.
  *
- * @package event-vetting
+ * @package Event-Vetting
  */
 
 namespace EventVetting;

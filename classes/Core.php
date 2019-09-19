@@ -2,7 +2,7 @@
 /**
  * Core plugin class.
  *
- * @package event-vetting
+ * @package Event-Vetting
  */
 
 namespace EventVetting;
