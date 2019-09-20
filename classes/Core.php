@@ -22,8 +22,9 @@ class Core {
 		$settings    = new Settings( EVENT_VETTING_PREFIX . 'group' );
 		$admin       = new Admin( $settings );
 		$application = new Application( $admin );
+		$rest_api    = new RestAPI( $settings, $admin );
 
-		$this->components = compact( 'settings', 'admin', 'application' );
+		$this->components = compact( 'settings', 'admin', 'application', 'rest_api' );
 	}
 
 	/**
