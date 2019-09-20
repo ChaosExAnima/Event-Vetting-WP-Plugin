@@ -30,7 +30,6 @@ class Settings {
 	 */
 	public function __construct( string $group_name ) {
 		$this->option_group = $group_name;
-		add_action( 'init', [ $this, 'setup' ] );
 	}
 
 	/**
@@ -87,7 +86,7 @@ class Settings {
 	 *
 	 * @return void
 	 */
-	public function setup() {
+	public function init() {
 		foreach ( $this->settings as $name => $args ) {
 			register_setting(
 				$this->option_group,

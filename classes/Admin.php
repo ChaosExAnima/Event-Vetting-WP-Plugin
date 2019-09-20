@@ -41,9 +41,18 @@ class Admin {
 	public function __construct( Settings $settings ) {
 		$this->settings  = $settings;
 		$this->root_page = new PageFactory( self::MENU_SLUG );
+	}
 
+	/**
+	 * Sets up hooks.
+	 *
+	 * @return void
+	 */
+	public function setup() {
+		if ( ! is_admin() ) {
+			return;
+		}
 		add_action( 'admin_menu', [ $this, 'menu' ] );
-		add_action( 'admin_init', [ $this, 'init' ] );
 	}
 
 	/**
@@ -60,14 +69,6 @@ class Admin {
 			'dashicons-feedback'
 		);
 		new SettingsPage( $this->root_page, $this->settings );
-	}
-
-	/**
-	 * Initializes the admin pages.
-	 *
-	 * @return void
-	 */
-	public function init() {
 	}
 
 	/**

@@ -24,8 +24,6 @@ class Application {
 	 * @param Admin $admin Admin page reference.
 	 */
 	public function __construct( Admin $admin ) {
-		add_action( 'init', [ $this, 'register_post_type' ] );
-
 		$this->admin = $admin;
 	}
 
@@ -34,7 +32,7 @@ class Application {
 	 *
 	 * @return void
 	 */
-	public function register_post_type() {
+	public function init() {
 		$labels = [
 			'name'               => __( 'Applications', 'event-vetting' ),
 			'singular_name'      => __( 'Application', 'event-vetting' ),

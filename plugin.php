@@ -23,3 +23,4 @@ require_once __DIR__ . '/vendor/autoload.php';
 
 global $event_vetting_core;
 $event_vetting_core = new Core();
+$event_vetting_core->setup();
