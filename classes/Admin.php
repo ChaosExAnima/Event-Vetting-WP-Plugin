@@ -17,7 +17,7 @@ class Admin {
 	/**
 	 * Top level slug for admin menu.
 	 */
-	const MENU_SLUG = 'event-vetting';
+	const MENU_SLUG = 'event_vetting';
 
 	/**
 	 * Settings instance.
