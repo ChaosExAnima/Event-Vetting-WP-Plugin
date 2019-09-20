@@ -32,6 +32,7 @@ class SettingsPage extends AdminPage {
 			__( 'Settings', 'event-vetting' ),
 			[ $this, 'render_page' ],
 			'',
+			'',
 			'manage_options'
 		);
 		$this->settings = $settings;
