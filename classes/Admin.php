@@ -34,13 +34,21 @@ class Admin {
 	protected $root_page;
 
 	/**
+	 * The settings page.
+	 *
+	 * @var SettingsPage
+	 */
+	protected $settings_page;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param Settings $settings Settings instance.
 	 */
 	public function __construct( Settings $settings ) {
-		$this->settings  = $settings;
-		$this->root_page = new PageFactory( self::MENU_SLUG );
+		$this->settings      = $settings;
+		$this->root_page     = new PageFactory( self::MENU_SLUG );
+		$this->settings_page = new SettingsPage( $this->root_page, $this->settings );
 	}
 
 	/**
@@ -52,7 +60,8 @@ class Admin {
 		if ( ! is_admin() ) {
 			return;
 		}
-		add_action( 'admin_menu', [ $this, 'menu' ] );
+		add_action( 'admin_menu', [ $this, 'admin_menu' ] );
+		add_action( 'admin_init', [ $this, 'admin_init' ] );
 	}
 
 	/**
@@ -60,7 +69,7 @@ class Admin {
 	 *
 	 * @return void
 	 */
-	public function menu() {
+	public function admin_menu() {
 		$this->root_page->menu_init(
 			__( 'Event Vetting', 'event-vetting' ),
 			__( 'Vetting', 'event-vetting' ),
@@ -68,7 +77,16 @@ class Admin {
 			'manage_options',
 			'dashicons-feedback'
 		);
-		new SettingsPage( $this->root_page, $this->settings );
+		$this->settings_page->menu_init();
+	}
+
+	/**
+	 * Initializes child pages.
+	 *
+	 * @return void
+	 */
+	public function admin_init() {
+		$this->settings_page->admin_init();
 	}
 
 	/**
