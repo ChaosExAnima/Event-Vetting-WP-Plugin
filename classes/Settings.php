@@ -37,19 +37,19 @@ class Settings {
 	 *
 	 * @param string   $name              Name of the setting to register.
 	 * @param string   $type              Type of the setting to register.
-	 * @param string   $default           Default setting value.
+	 * @param mixed    $default           Default setting value.
 	 * @param callable $sanitize_callback Callback for sanitization.
 	 *
-	 * @return boolean
+	 * @return Setting
 	 */
 	public function register(
 		string $name,
 		string $type = 'string',
-		string $default = '',
+		$default = '',
 		callable $sanitize_callback = null
-	) : bool {
+	) : Setting {
 		if ( isset( $this->settings[ $name ] ) ) {
-			return false;
+			return $this->settings[ $name ];
 		}
 
 		// Adds a sanitization callback based off type.
@@ -59,12 +59,23 @@ class Settings {
 					$sanitize_callback = 'sanitize_text_field';
 					break;
 				case 'boolean':
+				case 'bool':
+					$type              = 'boolean';
 					$sanitize_callback = 'wp_validate_boolean';
 					break;
 				case 'integer':
+				case 'int':
+					$type              = 'integer';
 					$sanitize_callback = 'intval';
 					break;
+				case 'absint':
+				case 'abs':
+					$type              = 'integer';
+					$sanitize_callback = 'absint';
+					break;
+				case 'num':
 				case 'number':
+					$type              = 'number';
 					$sanitize_callback = 'floatval';
 					break;
 				case 'raw':
@@ -76,9 +87,15 @@ class Settings {
 		if ( is_callable( $sanitize_callback ) ) {
 			$default = $sanitize_callback( $default );
 		}
-		$this->settings[ $name ] = compact( 'name', 'type', 'default', 'sanitize_callback' );
+		$this->settings[ $name ] = new Setting(
+			$this,
+			$name,
+			$type,
+			$default,
+			$sanitize_callback,
+		);
 
-		return true;
+		return $this->settings[ $name ];
 	}
 
 	/**
@@ -87,7 +104,13 @@ class Settings {
 	 * @return void
 	 */
 	public function init() {
-		foreach ( $this->settings as $name => $args ) {
+		foreach ( $this->settings as $name => $setting ) {
+			$args = [
+				'type'              => $setting->type,
+				'description'       => $setting->description,
+				'sanitize_callback' => $setting->sanitize_callback,
+				'default'           => $setting->default,
+			];
 			register_setting(
 				$this->option_group,
 				EVENT_VETTING_PREFIX . $name,
@@ -108,10 +131,9 @@ class Settings {
 		}
 		$setting = $this->settings[ $name ];
 
-		$value = get_option( self::OPTION_NAME_PREFIX . $name, $setting['default'] );
-		if ( is_callable( $setting['sanitize_callback'] ) ) {
-			$sanitize_callback = $setting['sanitize_callback'];
-			return $sanitize_callback( $value );
+		$value = get_option( EVENT_VETTING_PREFIX . $name, $setting->default );
+		if ( is_callable( $setting->sanitize_callback ) ) {
+			return call_user_func( $setting->sanitize_callback, $value );
 		}
 		return $value;
 	}
@@ -131,6 +153,30 @@ class Settings {
 	}
 
 	/**
+	 * Gets info about a particular setting.
+	 *
+	 * @param string $name  Key for setting to get.
+	 * @return Setting|null Setting instance or null.
+	 */
+	public function get_setting( string $name ) {
+		if ( isset( $this->settings[ $name ] ) ) {
+			return $this->settings[ $name ];
+		}
+		return null;
+	}
+
+	/**
+	 * Gets all settings that are to be displayed in the admin.
+	 *
+	 * @return array
+	 */
+	public function get_display_settings() : array {
+		return array_filter( $this->settings, function( $setting ) {
+			return $setting->show_in_settings;
+		} );
+	}
+
+	/**
 	 * Updates a setting.
 	 *
 	 * @param string $name  The name of the option.
@@ -143,12 +189,11 @@ class Settings {
 		}
 
 		$setting = $this->settings[ $name ];
-		if ( is_callable( $setting['sanitize_callback'] ) ) {
-			$sanitize_callback = $setting['sanitize_callback'];
-			$value             = $sanitize_callback( $value );
+		if ( is_callable( $setting->sanitize_callback ) ) {
+			$value = call_user_func( $setting->sanitize_callback, $value );
 		}
 
-		$updated = update_option( self::OPTION_NAME_PREFIX . $name, $value, false );
+		$updated = update_option( EVENT_VETTING_PREFIX . $name, $value, false );
 		if ( $updated ) {
 			/**
 			 * Fires for all updated setting events.
