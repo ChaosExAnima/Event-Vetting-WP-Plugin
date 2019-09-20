@@ -12,10 +12,21 @@ class Application {
 	const POST_TYPE = 'event_vetting_app'; // Needs to be shorter than 20 characters.
 
 	/**
-	 * Constructor.
+	 * Admin class reference.
+	 *
+	 * @var Admin
 	 */
-	public function __construct() {
+	protected $admin;
+
+	/**
+	 * Constructor.
+	 *
+	 * @param Admin $admin Admin page reference.
+	 */
+	public function __construct( Admin $admin ) {
 		add_action( 'init', [ $this, 'register_post_type' ] );
+
+		$this->admin = $admin;
 	}
 
 	/**
@@ -35,14 +46,15 @@ class Application {
 			'search_items'       => __( 'Search Applications', 'event-vetting' ),
 			'not_found'          => __( 'No Applications found', 'event-vetting' ),
 			'not_found_in_trash' => __( 'No Applications found in trash', 'event-vetting' ),
-			'all_items'          => __( 'All Applications', 'event-vetting' ),
+			'all_items'          => __( 'Applications', 'event-vetting' ),
 		];
 		register_post_type( self::POST_TYPE, [
 			'labels'               => $labels,
 			'description'          => __( 'Applications', 'event-vetting' ),
 			'show_ui'              => true,
-			'show_in_menu'         => false,
+			'show_in_menu'         => $this->admin->get_menu_slug(),
 			'show_in_rest'         => false,
+			'show_in_admin_bar'    => false,
 			'supports'             => [ 'thumbnail', 'revisions' ],
 			'register_meta_box_cb' => [ $this, 'register_meta_boxes' ],
 			'rewrite'              => false,
