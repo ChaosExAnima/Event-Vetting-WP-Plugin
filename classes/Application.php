@@ -57,7 +57,11 @@ class Application {
 			'register_meta_box_cb' => [ $this, 'register_meta_boxes' ],
 			'rewrite'              => false,
 			'capabilities'         => [
-				'create_posts' => 'do_not_allow',
+				'create_posts'  => 'do_not_allow',
+				'delete_post'   => 'do_not_allow',
+				'edit_posts'    => Roles::VETTER_CAP,
+				'edit_post'     => Roles::VETTER_CAP,
+				'publish_posts' => Roles::VETTER_CAP,
 			],
 		] );
 	}
@@ -68,6 +72,5 @@ class Application {
 	 * @return void
 	 */
 	public function register_meta_boxes() {
-
 	}
 }
