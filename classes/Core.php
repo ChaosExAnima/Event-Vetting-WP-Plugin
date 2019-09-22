@@ -21,9 +21,10 @@ class Core {
 	public function __construct() {
 		$settings    = new Settings( EVENT_VETTING_PREFIX . 'group' );
 		$admin       = new Admin( $settings );
+		$roles       = new Roles();
 		$application = new Application( $admin );
 
-		$this->components = compact( 'settings', 'admin', 'application' );
+		$this->components = compact( 'settings', 'admin', 'roles', 'application' );
 	}
 
 	/**

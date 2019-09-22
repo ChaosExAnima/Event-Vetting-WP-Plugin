@@ -74,7 +74,7 @@ class Admin {
 			__( 'Event Vetting', 'event-vetting' ),
 			__( 'Vetting', 'event-vetting' ),
 			'__return_empty_string',
-			'manage_options',
+			Roles::VETTER_CAP,
 			'dashicons-feedback'
 		);
 		$this->settings_page->menu_init();
