@@ -25,6 +25,8 @@ class Core {
 		$application = new Application( $admin );
 
 		$this->components = compact( 'settings', 'admin', 'roles', 'application' );
+
+		register_activation_hook( EVENT_VETTING_PLUGIN_FILE, [ __CLASS__, 'install' ] );
 	}
 
 	/**
@@ -53,5 +55,14 @@ class Core {
 				call_user_func( [ $instance, $current_action ] );
 			}
 		}
+	}
+
+	/**
+	 * Runs installation functions.
+	 *
+	 * @return void
+	 */
+	public static function install() {
+		Roles::install();
 	}
 }

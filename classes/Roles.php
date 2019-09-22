@@ -41,9 +41,9 @@ class Roles {
 	 *
 	 * @return void
 	 */
-	public function init() {
-		if ( ! get_role( self::VETTER_ROLE ) ) {
-			$subscriber = get_role( 'subscriber' );
+	public static function install() {
+		// Gets base roles off of subscriber.
+		$subscriber = get_role( 'subscriber' );
 		$base_caps  = $subscriber->capabilities;
 
 		// Adds capability to view dashboard if WC is installed.
@@ -52,8 +52,8 @@ class Roles {
 		}
 
 		delete_role( self::VETTER_ROLE );
-			add_role(
-				self::VETTER_ROLE,
+		add_role(
+			self::VETTER_ROLE,
 			__( 'Event Vetter', 'event-vetting' ),
 			array_merge( $base_caps, [
 				self::VETTER_CAP => true,
@@ -66,8 +66,8 @@ class Roles {
 			__( 'Event Safety', 'event-vetting' ),
 			array_merge( $base_caps, [
 				self::SAFETY_ROLE => true,
-				] )
-			);
+			] )
+		);
 
 		// Updates admin with all capabilities.
 		$admin = get_role( 'administrator' );
