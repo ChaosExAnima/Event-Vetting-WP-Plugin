@@ -8,6 +8,9 @@ config:
 
 services:
   appserver:
+    config:
+      conf:
+        php: .php.ini
     run:
       - bash /app/bin/setup.sh
     build_as_root:
@@ -43,3 +46,10 @@ tooling:
     service: appserver
     description: "Runs PHP linting tests: lando lint"
     cmd: composer lint
+
+proxy:
+  mail:
+    - mail.lndo.site
+
+  phpmyadmin:
+    - sql.lndo.site
