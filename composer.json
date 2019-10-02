@@ -23,6 +23,6 @@
 	},
 	"scripts": {
 		"lint": "phpcs . --extensions=php",
-		"test": "phpunit"
+		"test": "phpunit -c .phpunit.xml"
 	}
 }

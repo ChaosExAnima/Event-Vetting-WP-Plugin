@@ -37,3 +37,9 @@ tooling:
   phpunit:
     service: appserver
     description: "Run PHP unit tests: lando phpunit"
+    cmd: composer test
+
+  lint:
+    service: appserver
+    description: "Runs PHP linting tests: lando lint"
+    cmd: composer lint

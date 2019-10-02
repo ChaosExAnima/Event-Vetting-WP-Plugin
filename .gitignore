@@ -5,3 +5,4 @@ wordpress/
 /vendor/*
 !/vendor/autoload.php
 !/vendor/composer
+transgression/
