@@ -12,6 +12,7 @@ namespace EventVetting\Admin;
 
 use EventVetting\Bases\AdminPage;
 use EventVetting\Settings;
+use EventVetting\Setting;
 
 class SettingsPage extends AdminPage {
 	/**
@@ -116,16 +117,50 @@ class SettingsPage extends AdminPage {
 	public function render_text_field( array $args ) {
 		$setting = $args['setting'];
 		$type    = 'text';
-		switch ( $setting->type ) {
-			case 'boolean':
-				$type = 'checkbox';
-				break;
-		}
 		printf(
 			'<input id="%1$s" name="%1$s" type="%2$s" value="%3$s" />',
 			esc_attr( $setting->key ),
 			esc_attr( $type ),
 			esc_attr( $setting->value )
 		);
+		$this->render_description( $setting );
+	}
+
+	/**
+	 * Renders checkbox field.
+	 *
+	 * @param array $args Field arguments.
+	 * @return void
+	 */
+	public function render_boolean_field( array $args ) {
+		$setting = $args['setting'];
+		printf(
+			'<label for="%s">',
+			esc_attr( $setting->key )
+		);
+		printf(
+			'<input id="%1$s" name="%1$s" type="checkbox" value="1" %2$s />',
+			esc_attr( $setting->key ),
+			checked( true, $setting->value, false )
+		);
+		if ( $setting->description ) {
+			echo ' ' . esc_html( $setting->description );
+		}
+		echo '</label>';
+	}
+
+	/**
+	 * Renders the field description.
+	 *
+	 * @param Setting $setting Setting instance.
+	 * @return void
+	 */
+	protected function render_description( Setting $setting ) {
+		if ( $setting->description ) {
+			printf(
+				'<p class="description">%s</p>',
+				esc_html( $setting->description )
+			);
+		}
 	}
 }
