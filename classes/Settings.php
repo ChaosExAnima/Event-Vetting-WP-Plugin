@@ -193,6 +193,17 @@ class Settings {
 			$value = call_user_func( $setting->sanitize_callback, $value );
 		}
 
+		/**
+		 * Filters specific settings before update.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param mixed   $value The value of the setting.
+		 * @param Setting $name  The setting object.
+		 */
+		$value = apply_filters( "event_vetting_pre_update_setting_{$name}", $value, $setting );
+		var_dump( $value );
+
 		$updated = update_option( EVENT_VETTING_PREFIX . $name, $value, false );
 		if ( $updated ) {
 			/**
