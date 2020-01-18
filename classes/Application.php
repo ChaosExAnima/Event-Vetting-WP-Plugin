@@ -11,7 +11,13 @@ use WP_Error;
 
 class Application {
 
-	const POST_TYPE = 'event_vetting_app'; // Needs to be shorter than 20 characters.
+	const POST_TYPE = 'ev_application'; // Needs to be shorter than 20 characters.
+
+	const STATUS_PENDING = 'ev_pending';
+
+	const STATUS_APPROVED = 'ev_approved';
+
+	const STATUS_DENIED = 'ev_denied';
 
 	/**
 	 * Admin class reference.
@@ -27,6 +33,15 @@ class Application {
 	 */
 	public function __construct( Admin $admin ) {
 		$this->admin = $admin;
+	}
+
+	/**
+	 * Sets up action hooks.
+	 *
+	 * @return void
+	 */
+	public function setup() {
+		add_action( 'admin_init', [ $this, 'admin_init' ] );
 	}
 
 	/**
@@ -66,6 +81,57 @@ class Application {
 				'publish_posts' => Roles::VETTER_CAP,
 			],
 		] );
+
+		register_post_status( self::STATUS_PENDING, [
+			'label'                     => __( 'Pending', 'event-vetting' ),
+			'public'                    => false,
+			'internal'                  => true,
+			'show_in_admin_all_list'    => true,
+			'show_in_admin_status_list' => true,
+			'label_count'               => _n_noop(
+				'Pending <span class="count">(%s)</span>',
+				'Pending <span class="count">(%s)</span>',
+				'event-vetting'
+			),
+		] );
+
+		register_post_status( self::STATUS_APPROVED, [
+			'label'                     => __( 'Approved', 'event-vetting' ),
+			'public'                    => false,
+			'internal'                  => true,
+			'show_in_admin_all_list'    => false,
+			'show_in_admin_status_list' => true,
+			'label_count'               => _n_noop(
+				'Approved <span class="count">(%s)</span>',
+				'Approved <span class="count">(%s)</span>',
+				'event-vetting'
+			),
+		] );
+
+		register_post_status( self::STATUS_DENIED, [
+			'label'                     => __( 'Denied', 'event-vetting' ),
+			'public'                    => false,
+			'internal'                  => true,
+			'show_in_admin_all_list'    => false,
+			'show_in_admin_status_list' => true,
+			'label_count'               => _n_noop(
+				'Denied <span class="count">(%s)</span>',
+				'Denied <span class="count">(%s)</span>',
+				'event-vetting'
+			),
+		] );
+	}
+
+	/**
+	 * Sets up hooks on the admin only.
+	 *
+	 * @return void
+	 */
+	public function admin_init() {
+		add_filter( 'views_edit-' . self::POST_TYPE, function( array $views ) {
+			unset( $views['all'] );
+			return $views;
+		} );
 	}
 
 	/**
@@ -109,10 +175,12 @@ class Application {
 			'post_type'    => self::POST_TYPE,
 			'post_title'   => $sanitized_data['name'],
 			'post_content' => $sanitized_data['email'],
+			'post_status'  => self::STATUS_PENDING,
 			'meta_input'   => [
 				'event_vetting_application_data' => $sanitized_data,
 			],
-		] );
+		], true );
+		delete_transient( "event_vetting_application_email_key_{$sanitized_data['email']}" );
 
 		return $application_id;
 	}
