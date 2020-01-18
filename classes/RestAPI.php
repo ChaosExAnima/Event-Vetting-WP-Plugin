@@ -81,12 +81,13 @@ class RestAPI {
 	 * @return void
 	 */
 	public function action_rest_init() {
+		$additional_args = apply_filters( 'event_vetting_rest_apply_additional_fields', [] );
 		register_rest_route(
 			self::NAMESPACE,
 			'/apply',
 			[
 				'methods'             => WP_REST_Server::CREATABLE,
-				'args'                => [
+				'args'                => array_merge( [
 					'key'   => [
 						'validate_callback' => [ 'EventVetting\RestAPI', 'validate_string_length' ],
 					],
@@ -98,7 +99,7 @@ class RestAPI {
 						'required'          => true,
 						'validate_callback' => 'is_email',
 					],
-				],
+				], $additional_args ),
 				'callback'            => [ $this, 'handle_apply' ],
 				'permission_callback' => [ $this, 'permission_check' ],
 			]
@@ -124,10 +125,15 @@ class RestAPI {
 	 * @return WP_REST_Response
 	 */
 	public function handle_apply( WP_REST_Request $request ) {
-		$application_id = $this->application->create( $request->get_params() );
+		$application_data = $request->get_params();
+		unset( $application_data['key'] );
+		$application = $this->application->create( $application_data );
+		if ( is_wp_error( $application ) ) {
+			return rest_ensure_response( $application );
+		}
 		return rest_ensure_response( [
 			'success' => true,
-			'ID'      => $application_id,
+			'ID'      => $application,
 		] );
 	}
 
