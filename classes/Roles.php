@@ -51,7 +51,7 @@ class Roles {
 			$base_caps['view_admin_dashboard'] = true;
 		}
 
-		delete_role( self::VETTER_ROLE );
+		remove_role( self::VETTER_ROLE );
 		add_role(
 			self::VETTER_ROLE,
 			__( 'Event Vetter', 'event-vetting' ),
@@ -60,7 +60,7 @@ class Roles {
 			] )
 		);
 
-		delete_role( self::SAFETY_ROLE );
+		remove_role( self::SAFETY_ROLE );
 		add_role(
 			self::SAFETY_ROLE,
 			__( 'Event Safety', 'event-vetting' ),
