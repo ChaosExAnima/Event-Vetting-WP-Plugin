@@ -56,16 +56,19 @@ class RestAPI {
 			__( 'Whether to enable the API to get vetting entries.', 'event-vetting' )
 		);
 
-		if ( $this->settings->enable_api ) {
-			$this->settings
-				->register( 'rest_key', 'string', '' )
-				->add_field_data(
-					__( 'REST API key', 'event-vetting' ),
-					__( 'Key API requests must use.', 'event-vetting' )
-				);
+		if ( ! $this->settings->enable_api ) {
+			return;
 		}
 
-		add_filter( 'event_vetting_pre_update_setting_rest_key', [ $this, 'filter_update_key' ] );
+		$this->settings->register(
+			'rest_key',
+			'string',
+			'',
+			[ $this, 'filter_update_key' ]
+		)->add_field_data(
+			__( 'REST API key', 'event-vetting' ),
+			__( 'Key API requests must use. Set to blank to random generate one.', 'event-vetting' )
+		);
 		add_action( 'rest_api_init', [ $this, 'action_rest_init' ] );
 	}
 
@@ -103,8 +106,8 @@ class RestAPI {
 	 * @return string
 	 */
 	public function filter_update_key( $key ) : string {
-		if ( ! $key ) {
-			return wp_generate_password( 12, false );
+		if ( ! $key && function_exists( 'wp_generate_password' ) ) {
+			return wp_generate_password( 20, false );
 		}
 		return sanitize_text_field( $key );
 	}
