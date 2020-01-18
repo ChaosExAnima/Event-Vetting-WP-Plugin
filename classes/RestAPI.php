@@ -11,6 +11,7 @@
 namespace EventVetting;
 
 use WP_REST_Request;
+use WP_REST_Server;
 
 class RestAPI {
 
@@ -82,11 +83,29 @@ class RestAPI {
 			self::NAMESPACE,
 			'/apply',
 			[
+				'methods'             => WP_REST_Server::CREATABLE,
+				'args'                => [
+					'key'   => [
+						'validate_callback' => [ 'EventVetting\RestAPI', 'validate_string_length' ],
+					],
 				'methods'             => 'POST',
+				],
 				'callback'            => [ $this, 'handle_apply' ],
-				'permission_callback' => '__return_true',
+				'permission_callback' => [ $this, 'permission_check' ],
 			]
 		);
+	}
+
+	/**
+	 * Checks permissions for requests with key.
+	 *
+	 * @param WP_REST_Request $request The request instance.
+	 * @return boolean
+	 */
+	public function permission_check( WP_REST_Request $request ) : bool {
+		$input_key = $request->get_param( 'key' );
+		$valid_key = $this->settings->get( 'rest_key' );
+		return ( $input_key === $valid_key );
 	}
 
 	/**
@@ -110,5 +129,15 @@ class RestAPI {
 			return wp_generate_password( 20, false );
 		}
 		return sanitize_text_field( $key );
+	}
+
+	/**
+	 * Validates a string isn't empty.
+	 *
+	 * @param string $input Raw input string.
+	 * @return boolean
+	 */
+	public static function validate_string_length( string $input ) : bool {
+		return (bool) strlen( $input );
 	}
 }
