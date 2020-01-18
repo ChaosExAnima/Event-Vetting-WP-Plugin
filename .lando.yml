@@ -16,7 +16,8 @@ services:
       environment:
         WP_TESTS_DIR: /app/wordpress
       volumes:
-        - ".:/app/wordpress/wp-content/plugins/vetting-events"
+        - ".:/app/wordpress/wp-content/plugins/vetting-events:ro"
+        - "./plugins:/app/wordpress/wp-content/plugins"
 
   phpmyadmin:
     type: phpmyadmin

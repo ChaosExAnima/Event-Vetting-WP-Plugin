@@ -21,10 +21,13 @@ class Core {
 	public function __construct() {
 		$settings    = new Settings( EVENT_VETTING_PREFIX . 'group' );
 		$admin       = new Admin( $settings );
+		$roles       = new Roles();
 		$application = new Application( $admin );
 		$rest_api    = new RestAPI( $settings, $admin );
 
-		$this->components = compact( 'settings', 'admin', 'application', 'rest_api' );
+		$this->components = compact( 'settings', 'admin', 'roles', 'application', 'rest_api' );
+
+		register_activation_hook( EVENT_VETTING_PLUGIN_FILE, [ __CLASS__, 'install' ] );
 	}
 
 	/**
@@ -53,5 +56,14 @@ class Core {
 				call_user_func( [ $instance, $current_action ] );
 			}
 		}
+	}
+
+	/**
+	 * Runs installation functions.
+	 *
+	 * @return void
+	 */
+	public static function install() {
+		Roles::install();
 	}
 }
