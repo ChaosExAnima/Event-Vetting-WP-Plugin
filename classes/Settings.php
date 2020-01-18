@@ -202,7 +202,6 @@ class Settings {
 		 * @param Setting $name  The setting object.
 		 */
 		$value = apply_filters( "event_vetting_pre_update_setting_{$name}", $value, $setting );
-		var_dump( $value );
 
 		$updated = update_option( EVENT_VETTING_PREFIX . $name, $value, false );
 		if ( $updated ) {
