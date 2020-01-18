@@ -118,7 +118,7 @@ class SettingsPage extends AdminPage {
 		$setting = $args['setting'];
 		$type    = 'text';
 		printf(
-			'<input id="%1$s" name="%1$s" type="%2$s" value="%3$s" />',
+			'<input id="%1$s" name="%1$s" type="%2$s" value="%3$s" class="regular-text" />',
 			esc_attr( $setting->key ),
 			esc_attr( $type ),
 			esc_attr( $setting->value )
