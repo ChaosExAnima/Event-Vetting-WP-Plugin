@@ -34,12 +34,14 @@ class RestAPI {
 	/**
 	 * Constructor.
 	 *
-	 * @param Settings $settings Settings instance.
-	 * @param Admin    $admin    Admin instance.
+	 * @param Settings    $settings Settings instance.
+	 * @param Admin       $admin    Admin instance.
+	 * @param Application $application Application instance.
 	 */
-	public function __construct( Settings $settings, Admin $admin ) {
-		$this->settings = $settings;
-		$this->admin    = $admin;
+	public function __construct( Settings $settings, Admin $admin, Application $application ) {
+		$this->settings    = $settings;
+		$this->admin       = $admin;
+		$this->application = $application;
 	}
 
 	/**
@@ -88,7 +90,14 @@ class RestAPI {
 					'key'   => [
 						'validate_callback' => [ 'EventVetting\RestAPI', 'validate_string_length' ],
 					],
-				'methods'             => 'POST',
+					'name'  => [
+						'required'          => true,
+						'validate_callback' => [ 'EventVetting\RestAPI', 'validate_string_length' ],
+					],
+					'email' => [
+						'required'          => true,
+						'validate_callback' => 'is_email',
+					],
 				],
 				'callback'            => [ $this, 'handle_apply' ],
 				'permission_callback' => [ $this, 'permission_check' ],
@@ -115,7 +124,11 @@ class RestAPI {
 	 * @return WP_REST_Response
 	 */
 	public function handle_apply( WP_REST_Request $request ) {
-		return rest_ensure_response( [ 'success' => true ] );
+		$application_id = $this->application->create( $request->get_params() );
+		return rest_ensure_response( [
+			'success' => true,
+			'ID'      => $application_id,
+		] );
 	}
 
 	/**

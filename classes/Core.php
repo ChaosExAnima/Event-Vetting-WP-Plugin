@@ -23,7 +23,7 @@ class Core {
 		$admin       = new Admin( $settings );
 		$roles       = new Roles();
 		$application = new Application( $admin );
-		$rest_api    = new RestAPI( $settings, $admin );
+		$rest_api    = new RestAPI( $settings, $admin, $application );
 
 		$this->components = compact( 'settings', 'admin', 'roles', 'application', 'rest_api' );
 

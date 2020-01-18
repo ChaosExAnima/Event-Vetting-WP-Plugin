@@ -67,6 +67,16 @@ class Application {
 	}
 
 	/**
+	 * Creates a new application.
+	 *
+	 * @param array $input_data The input information.
+	 * @return integer          Post ID of new application.
+	 */
+	public function create( array $input_data ) : int {
+		return 0;
+	}
+
+	/**
 	 * Registers custom meta boxes.
 	 *
 	 * @return void
