@@ -44,6 +44,10 @@ class ApplicationEditPage extends AdminPage {
 	 * @return void
 	 */
 	public function action_meta_boxes() : void {
+		// Removes the publish metabox.
+		remove_meta_box( 'submitdiv', null, 'side' );
+
+		// Application details.
 		add_meta_box(
 			'event-vetting-application-details',
 			__( 'Application Details', 'event-vetting' ),
@@ -51,6 +55,16 @@ class ApplicationEditPage extends AdminPage {
 			null,
 			'normal',
 			'high'
+		);
+
+		remove_meta_box( 'postimagediv', null, 'side' );
+		add_meta_box(
+			'postimagediv',
+			__( 'Applicant Photo', 'event-vetting' ),
+			'post_thumbnail_meta_box',
+			null,
+			'side',
+			'low'
 		);
 	}
 
@@ -76,11 +90,11 @@ class ApplicationEditPage extends AdminPage {
 	 */
 	public function render_details_meta_box( WP_Post $post ) {
 		$details = get_post_meta( $post->ID, 'event_vetting_application_data', true );
-		printf( '<table width="100%%">
+		printf( '<table class="app-details">
 			<thead>
 				<tr>
-					<th>%s</th>
-					<th>%s</th>
+					<th class="question">%s</th>
+					<th class="answer">%s</th>
 				</tr>
 			</thead>
 			<tbody>',
@@ -109,7 +123,7 @@ class ApplicationEditPage extends AdminPage {
 				);
 			}
 			printf(
-				'<tr><td class="%3$s">%1$s</td><td>%2$s</td></tr>',
+				'<tr class="%3$s"><td class="question">%1$s</td><td>%2$s</td></tr>',
 				esc_html( $field ),
 				wp_kses( $answer, $allowed_tags ),
 				esc_attr( $i % 2 ? 'alternate' : '' )
