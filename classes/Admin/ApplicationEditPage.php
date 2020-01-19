@@ -11,6 +11,7 @@ namespace EventVetting\Admin;
 
 use EventVetting\Application;
 use EventVetting\Bases\AdminPage;
+use EventVetting\Notes;
 use EventVetting\Roles;
 use WP_Post;
 
@@ -114,6 +115,15 @@ class ApplicationEditPage extends AdminPage {
 			null,
 			'side',
 			'high'
+		);
+
+		// Notes metabox.
+		add_meta_box(
+			'event-vetting-application-notes',
+			__( 'Notes', 'event-vetting' ),
+			[ $this, 'render_notes_meta_box' ],
+			null,
+			'side'
 		);
 
 		// Renames featured image.
@@ -264,6 +274,76 @@ class ApplicationEditPage extends AdminPage {
 			false
 		);
 		echo '</form>';
+	}
+
+	/**
+	 * Renders the notes metabox.
+	 *
+	 * @param WP_Post $post Current application instance.
+	 * @return void
+	 */
+	public function render_notes_meta_box( WP_Post $post ) : void {
+		echo '<ul class="notes">';
+		$notes = Notes::get_notes_for_application( $post->ID );
+		/**
+		 * Iterate over notes.
+		 *
+		 * @var \WP_Comment
+		 */
+		foreach ( $notes as $note ) {
+			$classes = [ 'note' ];
+			if ( Notes::COMMENT_USER_NOTE === $note->comment_type ) {
+				$classes[] = 'user';
+			} elseif ( Notes::COMMENT_SYSTEM_NOTE === $note->comment_type ) {
+				$classes[] = 'system';
+			}
+
+			$date_ts = strtotime( $note->comment_date_gmt );
+			if ( time() - $date_ts < DAY_IN_SECONDS ) {
+				$date_str = human_time_diff( strtotime( $note->comment_date_gmt ) ) . __( ' ago', 'event-vetting' );
+			} else {
+				$date_str = wp_date( 'M j, Y \a\t g:i a', $date_ts );
+			}
+
+			printf(
+				'<li rel="%1$d" class="%2$s">
+					<div class="note_content">%3$s</div>
+					<p class="meta">
+						<abbr class="exact-date">%4$s</abbr>
+						<span class="author">%5$s</span>
+					</p>
+				</li>',
+				intval( $note->comment_ID ),
+				esc_attr( implode( ' ', $classes ) ),
+				wp_kses_post( wpautop( wptexturize( make_clickable( $note->comment_content ) ) ) ),
+				esc_html( $date_str ),
+				esc_html( sprintf( __( 'by %s', 'event-vetting' ), $note->comment_author ) )
+			);
+		}
+		if ( ! count( $notes ) ) {
+			printf(
+				'<li class="no-note">%s</li>',
+				esc_html__( 'No notes yet.', 'event-vetting' )
+			);
+		}
+		echo '</ul>';
+
+		echo '<div class="add-note" id="js-add-note">';
+		printf(
+			'<p>
+				<label for="add_order_note">%s</label>
+				<textarea type="text" name="order_note" id="add_order_note" class="input-text large-text" cols="20" rows="5"></textarea>
+			</p>',
+			esc_html__( 'Add Note', 'event-vetting' )
+		);
+		printf(
+			'<p>
+				<button type="button" class="add_note button button-primary">%s</button>
+				<span class="spinner"></span>
+			</p>',
+			esc_html__( 'Add Note', 'event-vetting' )
+		);
+		echo '</div>';
 	}
 
 	/**

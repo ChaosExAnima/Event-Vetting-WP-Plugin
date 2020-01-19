@@ -14,3 +14,52 @@
 	width: 20%;
 	text-transform: capitalize;
 }
+
+.notes {
+	padding: 2px 0 0;
+}
+
+.note_content {
+	padding: 10px;
+	background: #efefef;
+	position: relative;
+}
+
+.note_content p {
+	margin: 0;
+	padding: 0;
+	word-wrap: break-word;
+}
+
+.note_content::after {
+	content: "";
+	display: block;
+	position: absolute;
+	bottom: -10px;
+	left: 20px;
+	width: 0;
+	height: 0;
+	border-width: 10px 10px 0 0;
+	border-style: solid;
+	border-color: #efefef transparent;
+}
+
+.notes .meta {
+	padding: 10px;
+	color: #999;
+	margin: 0;
+	font-size: 11px;
+}
+
+.note.system .author {
+	visibility: hidden;
+}
+
+.add-note label {
+	display: block;
+}
+
+.add-note .spinner {
+	float: none;
+	margin-bottom: 7px;
+}

@@ -211,8 +211,9 @@ class Application {
 	 * @return bool|WP_Error  True for success, false for already cast, error in other cases.
 	 */
 	public static function submit_vote( int $user_id, int $post_id, string $vote ) {
-		$vote_options = array_keys( self::get_voting_options() );
-		if ( ! in_array( $vote, $vote_options, true ) ) {
+		$vote_options = self::get_voting_options();
+		$vote_keys    = array_keys( $vote_options );
+		if ( ! in_array( $vote, $vote_keys, true ) ) {
 			return new WP_Error( 'invalid-vote', __( 'Invalid vote cast.', 'event-vetting' ) );
 		}
 
@@ -232,6 +233,22 @@ class Application {
 		$current_votes[ $user_id ] = $vote;
 
 		update_post_meta( $post_id, self::META_VOTES, $current_votes );
+
+		$user = get_userdata( $user_id );
+		if ( ! $updated_vote ) {
+			$message = sprintf(
+				__( 'Vetter %1$s voted for %2$s.', 'event-vetting' ),
+				$user->display_name,
+				$vote_options[ $vote ]
+			);
+		} else {
+			$message = sprintf(
+				__( 'Vetter %1$s changed their vote to %2$s.', 'event-vetting' ),
+				$user->display_name,
+				$vote_options[ $vote ]
+			);
+		}
+		Notes::add_system_note( $post_id, $message );
 
 		return $updated_vote;
 	}

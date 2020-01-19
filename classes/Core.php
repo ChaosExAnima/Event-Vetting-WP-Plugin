@@ -20,12 +20,13 @@ class Core {
 	 */
 	public function __construct() {
 		$settings    = new Settings( EVENT_VETTING_PREFIX . 'group' );
+		$notes       = new Notes();
 		$admin       = new Admin( $settings );
 		$roles       = new Roles();
 		$application = new Application( $admin );
 		$rest_api    = new RestAPI( $settings, $admin, $application );
 
-		$this->components = compact( 'settings', 'admin', 'roles', 'application', 'rest_api' );
+		$this->components = compact( 'settings', 'notes', 'admin', 'roles', 'application', 'rest_api' );
 
 		register_activation_hook( EVENT_VETTING_PLUGIN_FILE, [ __CLASS__, 'install' ] );
 	}
