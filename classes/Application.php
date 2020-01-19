@@ -8,8 +8,6 @@
 namespace EventVetting;
 
 use WP_Error;
-use WP_Post;
-use WP_Query;
 
 class Application {
 
