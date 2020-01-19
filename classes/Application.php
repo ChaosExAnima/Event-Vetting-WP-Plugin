@@ -57,16 +57,15 @@ class Application {
 			'all_items'          => __( 'Applications', 'event-vetting' ),
 		];
 		register_post_type( self::POST_TYPE, [
-			'labels'               => $labels,
-			'description'          => __( 'Applications', 'event-vetting' ),
-			'show_ui'              => true,
-			'show_in_menu'         => $this->admin->get_menu_slug(),
-			'show_in_rest'         => false,
-			'show_in_admin_bar'    => false,
-			'supports'             => [ 'thumbnail' ],
-			'register_meta_box_cb' => [ $this, 'register_meta_boxes' ],
-			'rewrite'              => false,
-			'capabilities'         => [
+			'labels'            => $labels,
+			'description'       => __( 'Applications', 'event-vetting' ),
+			'show_ui'           => true,
+			'show_in_menu'      => $this->admin->get_menu_slug(),
+			'show_in_rest'      => false,
+			'show_in_admin_bar' => false,
+			'supports'          => [ 'thumbnail' ],
+			'rewrite'           => false,
+			'capabilities'      => [
 				'create_posts'  => 'do_not_allow',
 				'delete_post'   => 'do_not_allow',
 				'edit_posts'    => Roles::VETTER_CAP,
@@ -164,73 +163,6 @@ class Application {
 		delete_transient( "event_vetting_application_email_key_{$sanitized_data['email']}" );
 
 		return $application_id;
-	}
-
-	/**
-	 * Registers custom meta boxes.
-	 *
-	 * @return void
-	 */
-	public function register_meta_boxes() {
-		add_meta_box(
-			'event-vetting-application-details',
-			__( 'Application Details', 'event-vetting' ),
-			[ $this, 'render_details_meta_box' ],
-			null,
-			'normal',
-			'high'
-		);
-	}
-
-	/**
-	 * Renders the application details meta box.
-	 *
-	 * @param WP_Post $post The post instance.
-	 * @return void
-	 */
-	public function render_details_meta_box( WP_Post $post ) {
-		$details = get_post_meta( $post->ID, 'event_vetting_application_data', true );
-		printf( '<table width="100%%">
-			<thead>
-				<tr>
-					<th>%s</th>
-					<th>%s</th>
-				</tr>
-			</thead>
-			<tbody>',
-			esc_html__( 'Question', 'event-vetting' ),
-			esc_html__( 'Answer', 'event-vetting' )
-		);
-		$i            = 0;
-		$allowed_tags = [
-			'a' => [
-				'href'   => [],
-				'target' => [],
-				'rel'    => [],
-			],
-		];
-		foreach ( $details as $field => $raw_answer ) {
-			$answer = trim( $raw_answer );
-			if ( filter_var( $raw_answer, FILTER_VALIDATE_URL ) ) {
-				$answer = sprintf(
-					'<a href="%1$s" target="_blank" rel="nofollow">%1$s</a>',
-					esc_url( $answer )
-				);
-			} elseif ( is_email( $answer ) ) {
-				$answer = sprintf(
-					'<a href="mailto:%1$s" target="_blank" rel="nofollow">%1$s</a>',
-					esc_attr( sanitize_email( $answer ) )
-				);
-			}
-			printf(
-				'<tr><td class="%3$s">%1$s</td><td>%2$s</td></tr>',
-				esc_html( $field ),
-				wp_kses( $answer, $allowed_tags ),
-				esc_attr( $i % 2 ? 'alternate' : '' )
-			);
-			$i++;
-		}
-		echo '</tbody></table>';
 	}
 
 	/**
