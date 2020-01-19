@@ -208,12 +208,20 @@ class Application {
 	 * @param int    $user_id The user ID that voted.
 	 * @param int    $post_id The application post object or ID.
 	 * @param string $vote    The vote from the user.
-	 * @return boolean             True if the user updated their vote.
+	 * @return bool|WP_Error  True for success, false for already cast, error in other cases.
 	 */
-	public static function submit_vote( int $user_id, int $post_id, string $vote ) : bool {
+	public static function submit_vote( int $user_id, int $post_id, string $vote ) {
 		$vote_options = array_keys( self::get_voting_options() );
 		if ( ! in_array( $vote, $vote_options, true ) ) {
-			return false;
+			return new WP_Error( 'invalid-vote', __( 'Invalid vote cast.', 'event-vetting' ) );
+		}
+
+		if ( self::STATUS_PENDING !== get_post_status( $post_id ) ) {
+			return new WP_Error( 'not-pending', __( 'This application is not pending.', 'event-vetting' ) );
+		}
+
+		if ( ! user_can( $user_id, Roles::VETTER_CAP, $post_id ) ) {
+			return new WP_Error( 'invalid-perms', __( 'You cannot vote.', 'event-vetting' ) );
 		}
 
 		$current_votes = self::get_votes( $post_id );
@@ -232,7 +240,7 @@ class Application {
 	 * Resets an application to pending state.
 	 *
 	 * @param integer $post_id The application ID.
-	 * @return true|WP_Error   True for success, false for already reset, error in other cases.
+	 * @return bool|WP_Error   True for success, false for already reset, error in other cases.
 	 */
 	public static function reset( int $post_id ) {
 		$application = get_post( $post_id );
