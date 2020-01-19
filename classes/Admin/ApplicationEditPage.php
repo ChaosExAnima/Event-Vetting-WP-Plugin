@@ -39,7 +39,12 @@ class ApplicationEditPage extends AdminPage {
 			$vote    = sanitize_text_field( wp_unslash( $_REQUEST['vote'] ) );
 			$user_id = get_current_user_id();
 
-			Application::submit_vote( $user_id, $post_id, $vote );
+			$result = Application::submit_vote( $user_id, $post_id, $vote );
+			if ( is_wp_error( $result ) ) {
+				// Using WP_Error instead of strings.
+				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+				wp_die( $result );
+			}
 		}
 
 		redirect_post( $post_id );
