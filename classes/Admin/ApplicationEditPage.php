@@ -24,6 +24,8 @@ class ApplicationEditPage extends AdminPage {
 		add_action( 'post_action_event_vetting_vote', [ $this, 'action_vote' ] );
 		add_action( 'post_action_event_vetting_admin_reset', [ $this, 'action_admin_reset' ] );
 		add_action( 'current_screen', [ $this, 'on_screen' ] );
+
+		add_filter( 'post_updated_messages', [ $this, 'filter_post_messages' ] );
 	}
 
 	/**
@@ -47,7 +49,9 @@ class ApplicationEditPage extends AdminPage {
 			}
 		}
 
-		redirect_post( $post_id );
+		$location = add_query_arg( 'message', 20, get_edit_post_link( $post_id, 'url' ) );
+		wp_safe_redirect( $location );
+		exit;
 	}
 
 	/**
@@ -63,7 +67,9 @@ class ApplicationEditPage extends AdminPage {
 			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			wp_die( $result );
 		}
-		redirect_post( $post_id );
+		$location = add_query_arg( 'message', 21, get_edit_post_link( $post_id, 'url' ) );
+		wp_safe_redirect( $location );
+		exit;
 	}
 
 	/**
@@ -258,5 +264,19 @@ class ApplicationEditPage extends AdminPage {
 			false
 		);
 		echo '</form>';
+	}
+
+	/**
+	 * Filters the messages for the application post type.
+	 *
+	 * @param array $messages Array of messages, keyed by post type.
+	 * @return array
+	 */
+	public function filter_post_messages( array $messages ) : array {
+		$messages[ Application::POST_TYPE ] = [
+			20 => __( 'Vote submitted.', 'event-vetting' ),
+			21 => __( 'Application reset to pending.', 'event-vetting' ),
+		];
+		return $messages;
 	}
 }
