@@ -21,7 +21,27 @@ class ApplicationEditPage extends AdminPage {
 	 * @return void
 	 */
 	public function admin_init() : void {
+		add_action( 'post_action_event_vetting_vote', [ $this, 'action_vote' ] );
 		add_action( 'current_screen', [ $this, 'on_screen' ] );
+	}
+
+	/**
+	 * Handles saving a post.
+	 *
+	 * @param integer $post_id The saved application ID.
+	 * @return void
+	 */
+	public function action_vote( int $post_id ) : void {
+		// phpcs:ignore WordPress.Security.NonceVerification
+		if ( ! empty( $_REQUEST['vote'] ) ) {
+			// phpcs:ignore WordPress.Security.NonceVerification
+			$vote    = sanitize_text_field( wp_unslash( $_REQUEST['vote'] ) );
+			$user_id = get_current_user_id();
+
+			Application::submit_vote( $user_id, $post_id, $vote );
+		}
+
+		redirect_post( $post_id );
 	}
 
 	/**
@@ -188,10 +208,16 @@ class ApplicationEditPage extends AdminPage {
 			return;
 		}
 
-		// TODO: Indicate if someone has already voted.
+		$votes        = Application::get_votes( $post->ID );
+		$vote_options = Application::get_voting_options();
+		$current_vote = 'yes';
+		if ( isset( $votes[ get_current_user_id() ] ) ) {
+			$current_vote = $votes[ get_current_user_id() ];
+		}
 
+		echo '<input name="action" value="event_vetting_vote" type="hidden" />';
 		echo '<fieldset>';
-		foreach ( Application::get_voting_options() as $key => $text ) {
+		foreach ( $vote_options as $key => $text ) {
 			printf(
 				'<p><label>
 					<input type="radio" name="vote" value="%1$s" %3$s />
@@ -199,7 +225,7 @@ class ApplicationEditPage extends AdminPage {
 				</label></p>',
 				esc_attr( $key ),
 				esc_html( $text ),
-				checked( $key, 'yes', false )
+				checked( $key, $current_vote, false )
 			);
 		}
 		echo '</fieldset>';
@@ -209,5 +235,6 @@ class ApplicationEditPage extends AdminPage {
 			'submit',
 			false
 		);
+		echo '</form>';
 	}
 }

@@ -19,6 +19,10 @@ class Application {
 
 	const STATUS_DENIED = 'ev_denied';
 
+	const META_INFO = 'event_vetting_application_data';
+
+	const META_VOTES = 'event_vetting_app_votes';
+
 	/**
 	 * Admin class reference.
 	 *
@@ -155,7 +159,7 @@ class Application {
 			'post_content' => $sanitized_data['email'],
 			'post_status'  => self::STATUS_PENDING,
 			'meta_input'   => [
-				'event_vetting_application_data' => $sanitized_data,
+				[ self::META_INFO ] => $sanitized_data,
 			],
 		], true );
 		delete_transient( "event_vetting_application_email_key_{$sanitized_data['email']}" );
@@ -182,6 +186,46 @@ class Application {
 			'maybe' => __( 'Tentatively Approve', 'event-vetting' ),
 			'deny'  => __( 'Deny', 'event-vetting' ),
 		] );
+	}
+
+	/**
+	 * Gets votes associated with a given application
+	 *
+	 * @param int $post_id The post to check.
+	 * @return array
+	 */
+	public static function get_votes( int $post_id ) : array {
+		$votes = get_post_meta( $post_id, self::META_VOTES, true );
+		if ( '' !== $votes ) {
+			return (array) $votes;
+		}
+		return [];
+	}
+
+	/**
+	 * Submits a vote for a given user.
+	 *
+	 * @param int    $user_id The user ID that voted.
+	 * @param int    $post_id The application post object or ID.
+	 * @param string $vote    The vote from the user.
+	 * @return boolean             True if the user updated their vote.
+	 */
+	public static function submit_vote( int $user_id, int $post_id, string $vote ) : bool {
+		$vote_options = array_keys( self::get_voting_options() );
+		if ( ! in_array( $vote, $vote_options, true ) ) {
+			return false;
+		}
+
+		$current_votes = self::get_votes( $post_id );
+		$updated_vote  = false;
+		if ( isset( $current_votes[ $user_id ] ) ) {
+			$updated_vote = true;
+		}
+		$current_votes[ $user_id ] = $vote;
+
+		update_post_meta( $post_id, self::META_VOTES, $current_votes );
+
+		return $updated_vote;
 	}
 
 	/**
