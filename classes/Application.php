@@ -38,15 +38,6 @@ class Application {
 	}
 
 	/**
-	 * Sets up action hooks.
-	 *
-	 * @return void
-	 */
-	public function setup() {
-		add_action( 'current_screen', [ $this, 'admin_init' ] );
-	}
-
-	/**
 	 * Registers the post type.
 	 *
 	 * @return void
@@ -122,34 +113,6 @@ class Application {
 				'event-vetting'
 			),
 		] );
-	}
-
-	/**
-	 * Sets up hooks on the admin only.
-	 *
-	 * @return void
-	 */
-	public function admin_init() {
-		$screen = get_current_screen();
-		if ( self::POST_TYPE !== $screen->post_type ) {
-			return;
-		}
-
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		if ( empty( $_REQUEST['post_status'] ) ) {
-			$_REQUEST['post_status'] = self::STATUS_PENDING;
-		}
-
-		add_filter( 'pre_get_posts', function( WP_Query $wp_query ) {
-			if ( $wp_query->is_main_query() && ! $wp_query->get( 'post_status' ) ) {
-				$wp_query->set( 'post_status', self::STATUS_PENDING );
-			}
-		} );
-
-		add_filter( 'views_edit-' . self::POST_TYPE, function( array $views ) {
-			unset( $views['all'] );
-			return $views;
-		} );
 	}
 
 	/**
