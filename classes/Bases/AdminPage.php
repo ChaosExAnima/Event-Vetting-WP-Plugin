@@ -9,7 +9,7 @@ namespace EventVetting\Bases;
 
 abstract class AdminPage {
 	/**
-	 * Callback to render settings page.
+	 * Callback to render page.
 	 *
 	 * @return void
 	 */
