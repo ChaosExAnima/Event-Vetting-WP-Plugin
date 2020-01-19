@@ -176,26 +176,14 @@ class ApplicationEditPage extends AdminPage {
 			'a' => [
 				'href'   => [],
 				'target' => [],
-				'rel'    => [],
 			],
 		];
 		foreach ( $details as $field => $raw_answer ) {
 			$answer = trim( $raw_answer );
-			if ( filter_var( $raw_answer, FILTER_VALIDATE_URL ) ) {
-				$answer = sprintf(
-					'<a href="%1$s" target="_blank" rel="nofollow">%1$s</a>',
-					esc_url( $answer )
-				);
-			} elseif ( is_email( $answer ) ) {
-				$answer = sprintf(
-					'<a href="mailto:%1$s" target="_blank" rel="nofollow">%1$s</a>',
-					esc_attr( sanitize_email( $answer ) )
-				);
-			}
 			printf(
 				'<tr class="%3$s"><td class="question">%1$s</td><td>%2$s</td></tr>',
 				esc_html( $field ),
-				wp_kses( $answer, $allowed_tags ),
+				wp_kses( make_clickable( $answer ), $allowed_tags ),
 				esc_attr( $i % 2 ? 'alternate' : '' )
 			);
 			$i++;
