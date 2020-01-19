@@ -18,6 +18,7 @@ define( 'EVENT_VETTING_VERSION', '1.0.0' );
 define( 'EVENT_VETTING_PLUGIN_FILE', __FILE__ );
 define( 'EVENT_VETTING_PATH', plugin_dir_path( EVENT_VETTING_PLUGIN_FILE ) );
 define( 'EVENT_VETTING_URL', plugin_dir_url( EVENT_VETTING_PLUGIN_FILE ) );
+define( 'EVENT_VETTING_ASSETS', EVENT_VETTING_URL . '/assets' );
 define( 'EVENT_VETTING_PREFIX', 'event_vetting_' );
 
 require_once __DIR__ . '/vendor/autoload.php';

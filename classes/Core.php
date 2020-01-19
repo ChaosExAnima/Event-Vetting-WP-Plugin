@@ -23,8 +23,9 @@ class Core {
 		$admin       = new Admin( $settings );
 		$roles       = new Roles();
 		$application = new Application( $admin );
+		$rest_api    = new RestAPI( $settings, $admin, $application );
 
-		$this->components = compact( 'settings', 'admin', 'roles', 'application' );
+		$this->components = compact( 'settings', 'admin', 'roles', 'application', 'rest_api' );
 
 		register_activation_hook( EVENT_VETTING_PLUGIN_FILE, [ __CLASS__, 'install' ] );
 	}

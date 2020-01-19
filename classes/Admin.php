@@ -9,8 +9,10 @@
 
 namespace EventVetting;
 
+use EventVetting\Admin\ApplicationEditPage;
 use EventVetting\Admin\PageFactory;
 use EventVetting\Admin\SettingsPage;
+use EventVetting\Admin\ApplicationListPage;
 
 class Admin {
 
@@ -41,14 +43,30 @@ class Admin {
 	protected $settings_page;
 
 	/**
+	 * The application list page.
+	 *
+	 * @var ApplicationListPage
+	 */
+	protected $application_list_page;
+
+	/**
+	 * The application edit page.
+	 *
+	 * @var ApplicationEditPage
+	 */
+	protected $application_edit_page;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param Settings $settings Settings instance.
 	 */
 	public function __construct( Settings $settings ) {
-		$this->settings      = $settings;
-		$this->root_page     = new PageFactory( self::MENU_SLUG );
-		$this->settings_page = new SettingsPage( $this->root_page, $this->settings );
+		$this->settings              = $settings;
+		$this->root_page             = new PageFactory( self::MENU_SLUG );
+		$this->settings_page         = new SettingsPage( $this->root_page, $this->settings );
+		$this->application_list_page = new ApplicationListPage( $this->root_page );
+		$this->application_edit_page = new ApplicationEditPage( $this->root_page );
 	}
 
 	/**
@@ -87,6 +105,8 @@ class Admin {
 	 */
 	public function admin_init() {
 		$this->settings_page->admin_init();
+		$this->application_list_page->admin_init();
+		$this->application_edit_page->admin_init();
 	}
 
 	/**
