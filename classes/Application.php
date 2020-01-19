@@ -229,6 +229,34 @@ class Application {
 	}
 
 	/**
+	 * Resets an application to pending state.
+	 *
+	 * @param integer $post_id The application ID.
+	 * @return true|WP_Error   True for success, false for already reset, error in other cases.
+	 */
+	public static function reset( int $post_id ) {
+		$application = get_post( $post_id );
+		if ( self::POST_TYPE !== $application->post_type ) {
+			return new WP_Error( 'not-application', __( 'Post is not an application.', 'event-vetting' ) );
+		}
+		if ( self::STATUS_PENDING === $application->post_status ) {
+			return false;
+		}
+
+		if ( current_user_can( 'administrator' ) ) {
+			return new WP_Error( 'user-perms', __( 'Must be an administrator to reset applications.', 'event-vetting' ) );
+		}
+
+		$application->post_status = self::STATUS_PENDING;
+
+		$result = wp_update_post( $application, true );
+		if ( is_wp_error( $result ) ) {
+			return $result;
+		}
+		return (bool) $result;
+	}
+
+	/**
 	 * Gets an application by email.
 	 *
 	 * @param string $email The email to check.

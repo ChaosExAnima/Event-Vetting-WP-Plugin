@@ -22,6 +22,7 @@ class ApplicationEditPage extends AdminPage {
 	 */
 	public function admin_init() : void {
 		add_action( 'post_action_event_vetting_vote', [ $this, 'action_vote' ] );
+		add_action( 'post_action_event_vetting_admin_reset', [ $this, 'action_admin_reset' ] );
 		add_action( 'current_screen', [ $this, 'on_screen' ] );
 	}
 
@@ -41,6 +42,22 @@ class ApplicationEditPage extends AdminPage {
 			Application::submit_vote( $user_id, $post_id, $vote );
 		}
 
+		redirect_post( $post_id );
+	}
+
+	/**
+	 * Handles resetting an application to pending status.
+	 *
+	 * @param integer $post_id The saved application ID.
+	 * @return void
+	 */
+	public function action_admin_reset( int $post_id ) : void {
+		$result = Application::reset( $post_id );
+		if ( is_wp_error( $result ) ) {
+			// Using WP_Error instead of strings.
+			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			wp_die( $result );
+		}
 		redirect_post( $post_id );
 	}
 
@@ -187,8 +204,8 @@ class ApplicationEditPage extends AdminPage {
 		if ( Application::STATUS_PENDING !== $post->post_status ) {
 			if ( current_user_can( 'administrator' ) ) {
 				$reset_link = add_query_arg(
-					'admin-reset',
-					'1',
+					'action',
+					'event_vetting_admin_reset',
 					get_edit_post_link( $post )
 				);
 				printf(
