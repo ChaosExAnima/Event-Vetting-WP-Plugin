@@ -166,6 +166,27 @@ class Application {
 	}
 
 	/**
+	 * Gets voting options available.
+	 *
+	 * @return array
+	 */
+	public static function get_voting_options() : array {
+		/**
+		 * Filters application voting options.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param array $options Array of voting options, keyed by slug
+		 * and value of text.
+		 */
+		return apply_filters( 'event_vetting_application_voting_options', [
+			'yes'   => __( 'Approve', 'event-vetting' ),
+			'maybe' => __( 'Tentatively Approve', 'event-vetting' ),
+			'deny'  => __( 'Deny', 'event-vetting' ),
+		] );
+	}
+
+	/**
 	 * Gets an application by email.
 	 *
 	 * @param string $email The email to check.

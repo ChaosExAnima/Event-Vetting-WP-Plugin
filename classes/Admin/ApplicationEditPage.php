@@ -11,6 +11,7 @@ namespace EventVetting\Admin;
 
 use EventVetting\Application;
 use EventVetting\Bases\AdminPage;
+use EventVetting\Roles;
 use WP_Post;
 
 class ApplicationEditPage extends AdminPage {
@@ -19,7 +20,7 @@ class ApplicationEditPage extends AdminPage {
 	 *
 	 * @return void
 	 */
-	public function admin_init() {
+	public function admin_init() : void {
 		add_action( 'current_screen', [ $this, 'on_screen' ] );
 	}
 
@@ -28,7 +29,7 @@ class ApplicationEditPage extends AdminPage {
 	 *
 	 * @return void
 	 */
-	public function on_screen() {
+	public function on_screen() : void {
 		$current_screen = get_current_screen();
 		if ( 'post' !== $current_screen->base || Application::POST_TYPE !== $current_screen->post_type ) {
 			return;
@@ -57,6 +58,17 @@ class ApplicationEditPage extends AdminPage {
 			'high'
 		);
 
+		// Approval metabox.
+		add_meta_box(
+			'event-vetting-application-approval',
+			__( 'Review', 'event-vetting' ),
+			[ $this, 'render_approval_meta_box' ],
+			null,
+			'side',
+			'high'
+		);
+
+		// Renames featured image.
 		remove_meta_box( 'postimagediv', null, 'side' );
 		add_meta_box(
 			'postimagediv',
@@ -88,7 +100,7 @@ class ApplicationEditPage extends AdminPage {
 	 * @param WP_Post $post The post instance.
 	 * @return void
 	 */
-	public function render_details_meta_box( WP_Post $post ) {
+	public function render_details_meta_box( WP_Post $post ) : void {
 		$details = get_post_meta( $post->ID, 'event_vetting_application_data', true );
 		printf( '<table class="app-details">
 			<thead>
@@ -131,5 +143,71 @@ class ApplicationEditPage extends AdminPage {
 			$i++;
 		}
 		echo '</tbody></table>';
+	}
+
+	/**
+	 * Renders the approval metabox.
+	 *
+	 * @param WP_Post $post The post instance.
+	 * @return void
+	 */
+	public function render_approval_meta_box( WP_Post $post ) : void {
+		if ( Application::STATUS_APPROVED === $post->post_status ) {
+			printf(
+				'<p>%s</p>',
+				esc_html__( 'This application has been approved', 'event-vetting' )
+			);
+		} elseif ( Application::STATUS_DENIED === $post->post_status ) {
+			printf(
+				'<p>%s</p>',
+				esc_html__( 'This application has been denied', 'event-vetting' )
+			);
+		}
+
+		if ( Application::STATUS_PENDING !== $post->post_status ) {
+			if ( current_user_can( 'administrator' ) ) {
+				$reset_link = add_query_arg(
+					'admin-reset',
+					'1',
+					get_edit_post_link( $post )
+				);
+				printf(
+					'<p><a href="%1$s">%2$s</a></p>',
+					esc_url( $reset_link ),
+					esc_html__( 'Admin override: Reset to pending', 'event-vetting' )
+				);
+			}
+			return;
+		}
+
+		if ( ! current_user_can( Roles::VETTER_CAP ) ) {
+			printf(
+				'<p>%s</p>',
+				esc_html__( 'This application is pending approval', 'event-vetting' )
+			);
+			return;
+		}
+
+		// TODO: Indicate if someone has already voted.
+
+		echo '<fieldset>';
+		foreach ( Application::get_voting_options() as $key => $text ) {
+			printf(
+				'<p><label>
+					<input type="radio" name="vote" value="%1$s" %3$s />
+					<span>%2$s</span>
+				</label></p>',
+				esc_attr( $key ),
+				esc_html( $text ),
+				checked( $key, 'yes', false )
+			);
+		}
+		echo '</fieldset>';
+		submit_button(
+			__( 'Submit Vote', 'event-vetting' ),
+			'primary',
+			'submit',
+			false
+		);
 	}
 }
