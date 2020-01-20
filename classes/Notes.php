@@ -12,6 +12,35 @@ class Notes {
 	const COMMENT_USER_NOTE   = 'ev_user_note';
 	const COMMENT_SYSTEM_NOTE = 'ev_system_note';
 
+	const AJAX_ADD_NOTE = 'event_vetting_add_note';
+
+	public function setup() : void {
+		add_action( 'wp_ajax_' . self::AJAX_ADD_NOTE, [ $this, 'action_ajax_note' ] );
+	}
+
+	public function action_ajax_note() : void {
+		if ( ! current_user_can( 'read' ) ) {
+			wp_send_json_error( 'Invalid user' );
+		}
+
+		wp_send_json_success( 'hi' );
+	}
+
+	/**
+	 * Enqueues the needed CSS and JS.
+	 *
+	 * @return void
+	 */
+	public static function enqueue_js() : void {
+		wp_enqueue_script(
+			EVENT_VETTING_PREFIX . 'admin_note_js',
+			EVENT_VETTING_ASSETS . '/js/notes.js',
+			[],
+			EVENT_VETTING_VERSION,
+			true
+		);
+	}
+
 	/**
 	 * Gets all associated notes for an application.
 	 *

@@ -150,6 +150,8 @@ class ApplicationEditPage extends AdminPage {
 			[],
 			EVENT_VETTING_VERSION
 		);
+
+		Notes::enqueue_js();
 	}
 
 	/**
@@ -326,8 +328,8 @@ class ApplicationEditPage extends AdminPage {
 		);
 		printf(
 			'<p>
-				<button type="button" class="add_note button button-primary">%s</button>
-				<span class="spinner"></span>
+				<button type="button" class="add_note button button-primary" id="js-add-note-button">%s</button>
+				<span class="spinner" id="js-add-note-spinner"></span>
 			</p>',
 			esc_html__( 'Add Note', 'event-vetting' )
 		);
