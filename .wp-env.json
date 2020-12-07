@@ -1,0 +1,6 @@
+{
+	"plugins": [
+		".",
+		"https://downloads.wordpress.org/plugin/woocommerce.3.9.3.zip"
+	]
+}
